@@ -1,0 +1,54 @@
+name: Deploy Astro App
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      commit_sha:
+        description: 'Commit SHA to deploy (optional)'
+        required: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ github.event.inputs.commit_sha || github.sha }}
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+
+    - name: Install dependencies
+      run: yarn
+
+    - name: Build project
+      run: npm run build
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: ${{ success() }}
+
+    steps:
+    - name: Deploy via SSH
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_KEY }}
+        port: ${{ secrets.SSH_PORT || 22 }}
+        script: |
+          cd /var/www/astro-app
+          git fetch origin
+          git checkout ${{ github.event.inputs.commit_sha || 'main' }}
+          git pull origin ${{ github.event.inputs.commit_sha || 'main' }}
+          yarn
+          npm run build
+          pm2 restart astro-app
