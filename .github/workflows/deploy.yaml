@@ -45,10 +45,12 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         port: ${{ secrets.SSH_PORT || 22 }}
         script: |
-          cd /var/www/astro-app
-          git fetch origin
-          git checkout ${{ github.event.inputs.commit_sha || 'main' }}
-          git pull origin ${{ github.event.inputs.commit_sha || 'main' }}
-          yarn
-          npm run build
-          pm2 restart astro-app
+          echo "Hello"
+        # script: |
+        #   cd /var/www/astro-app
+        #   git fetch origin
+        #   git checkout ${{ github.event.inputs.commit_sha || 'main' }}
+        #   git pull origin ${{ github.event.inputs.commit_sha || 'main' }}
+        #   yarn
+        #   npm run build
+        #   pm2 restart astro-app
