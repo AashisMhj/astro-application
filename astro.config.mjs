@@ -11,7 +11,7 @@ export default defineConfig({
     preview: {
       host: true,
       port: 3000,
-      allowedHosts: ['*']
+      allowedHosts: ['ec2-54-161-15-209.compute-1.amazonaws.com','*']
     }
   }
 });
