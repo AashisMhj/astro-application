@@ -7,7 +7,11 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
 	site: 'https://example.com',
 	integrations: [mdx(), sitemap()],
-	server: {
-		allowedHosts: ['.com']
-	}
+	vite: {
+    preview: {
+      host: true,
+      port: 3000,
+      allowedHosts: ['*']
+    }
+  }
 });
